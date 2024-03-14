@@ -9,6 +9,7 @@ type User struct {
 	ID        uint      `json:"id" gorm:"primary_key"`
 	Login     string    `json:"login" gorm:"unique"`
 	Password  string    `json:"password"`
+	Avatar    string    `json:"avatar"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
 	Chats     []Chat    `json:"chats" gorm:"many2many:user_chats;"`

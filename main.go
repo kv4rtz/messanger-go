@@ -20,6 +20,7 @@ func main() {
 	router.WebSocketsRouter(r)
 	router.ChatRouter(r)
 
+	r.Static("/public", "./public")
 	if err := app.Listen(config.Current.Port); err != nil {
 		return
 	}

@@ -37,6 +37,15 @@ func Register(c *fiber.Ctx) error {
 	if err := c.BodyParser(&bodyUser); err != nil {
 		return c.Status(http.StatusBadRequest).JSON(utils.ResponseMessage{Message: "Ошибка при парсинге данных"})
 	}
+	file, err := c.FormFile("avatar")
+	if err != nil {
+		return c.Status(http.StatusBadRequest).JSON(utils.ResponseMessage{Message: "Ошибка при парсинге данных"})
+	}
+	destination := utils.GenerateDestinationFile(file, "avatars")
+	bodyUser.Avatar = destination[2:]
+	if err := c.SaveFile(file, destination); err != nil {
+		return c.Status(http.StatusInternalServerError).JSON(utils.ResponseMessage{Message: "Ошибка при сохранении файла"})
+	}
 	foundUser, err1 := userService.CreateUser(bodyUser)
 	if err1 != nil {
 		return c.Status(http.StatusBadRequest).JSON(utils.ResponseMessage{Message: err1.Error()})
