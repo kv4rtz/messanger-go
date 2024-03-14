@@ -51,3 +51,9 @@ func Register(c *fiber.Ctx) error {
 		"token": token,
 	})
 }
+
+func CheckToken(c *fiber.Ctx) error {
+	user := c.Locals("user").(models.User)
+
+	return c.Status(http.StatusOK).JSON(utils.ResponseMessage{Message: "Вы авторизованы под пользователем " + user.Login})
+}
