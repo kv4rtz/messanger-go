@@ -12,7 +12,9 @@ const montserrat = Montserrat({
 export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="ru">
-      <body className={clsx('dark', 'min-h-dvh', montserrat.className)}>
+      <body
+        className={clsx('dark', 'min-h-dvh font-medium', montserrat.className)}
+      >
         <Providers>{children}</Providers>
       </body>
     </html>

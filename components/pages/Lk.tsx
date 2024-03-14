@@ -1,23 +1,28 @@
 'use client'
 
+import { useCookie } from '@/hooks/use-cookie'
 import { useCheckQuery } from '@/store/api/auth.api'
-import { CircularProgress } from '@nextui-org/react'
+import { url } from '@/store/api/config'
+import { Avatar, Button, CircularProgress } from '@nextui-org/react'
+import { redirect, useRouter } from 'next/navigation'
 
 export const LkPage = () => {
   const { data, isLoading } = useCheckQuery()
+  const router = useRouter()
+  const logOut = () => {
+    useCookie('token', 'logout')
+    router.push('/')
+  }
   return (
-    <div>
+    <div className="flex justify-center items-center min-h-dvh">
       {isLoading ? (
         <CircularProgress />
       ) : (
         data && (
-          <div>
-            <h2 className="text-2xl font-bold text-center">
-              Welcome,{' '}
-              <mark className="bg-transparent text-primary-500">
-                {data.login}
-              </mark>
-            </h2>
+          <div className="flex flex-col items-center gap-3">
+            <Avatar src={`${url}/${data.avatar}`} />
+            <h2 className="font-bold">{data.login}</h2>
+            <Button onClick={logOut}>Выйти из аккаунта</Button>
           </div>
         )
       )}

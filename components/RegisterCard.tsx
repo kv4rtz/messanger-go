@@ -3,11 +3,11 @@
 import { useCookie } from '@/hooks/use-cookie'
 import { useLoginMutation } from '@/store/api/auth.api'
 import { ErrorMessage } from '@/store/api/index.api'
-import { Button, Input } from '@nextui-org/react'
+import { Avatar, Button, Input } from '@nextui-org/react'
 import clsx from 'clsx'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState, DragEvent } from 'react'
 import { useForm } from 'react-hook-form'
 
 interface LoginForm {
@@ -15,7 +15,12 @@ interface LoginForm {
   password: string
 }
 
-export const LoginCard = () => {
+interface FileObject {
+  current: File
+  preview: string
+}
+
+export const RegisterCard = () => {
   const {
     register,
     formState: { errors },
@@ -29,13 +34,37 @@ export const LoginCard = () => {
       redirect('/lk')
     }
   }, [data])
+  const inputUploader = useRef<HTMLInputElement>(null)
 
   const onSubmitLoginForm = (data: LoginForm) => {
     login(data)
   }
+  const upload = () => {
+    if (inputUploader.current) {
+      inputUploader.current.click()
+    }
+  }
+  const [file, setFile] = useState<FileObject | null>(null)
+  const handleInputUploader = () => {
+    if (inputUploader.current) {
+      if (inputUploader.current.files) {
+        const file = inputUploader.current.files[0]
+        const url = URL.createObjectURL(file)
+
+        setFile({ current: file, preview: url })
+      }
+    }
+  }
+  const handleDrop = (event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault()
+    const file = event.dataTransfer.files[0]
+    const url = URL.createObjectURL(file)
+
+    setFile({ current: file, preview: url })
+  }
   return (
     <div className="w-[500px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-      <h2 className="text-2xl font-bold text-center">Вход в аккаунт</h2>
+      <h2 className="text-2xl font-bold text-center">Регистрация</h2>
       <form
         onSubmit={handleSubmit(onSubmitLoginForm)}
         className="flex flex-col gap-2 my-4"
@@ -84,8 +113,36 @@ export const LoginCard = () => {
             </button>
           }
         />
+        <label
+          onDrop={handleDrop}
+          onDragOver={(e) => e.preventDefault()}
+          className="py-2 px-3 bg-default-100 rounded-medium cursor-pointer"
+        >
+          <p className="text-foreground-500 text-small">Аватар</p>
+          <div className="flex gap-3 items-center mt-2">
+            <Button onClick={upload}>Загрузить</Button>
+            {file ? (
+              <>
+                <Avatar src={file.preview} />
+                <p className="text-small text-foreground-500">
+                  {file.current.name}
+                </p>
+              </>
+            ) : (
+              <p className="text-small text-foreground-500">
+                Или перетащите сюда
+              </p>
+            )}
+          </div>
+          <input
+            onChange={handleInputUploader}
+            ref={inputUploader}
+            className="hidden"
+            type="file"
+          />
+        </label>
         <Button type="submit" color="primary" variant="solid">
-          Войти
+          Зарегистрироваться
         </Button>
         {error && (
           <p className="text-red-500 text-sm text-center">
@@ -94,12 +151,12 @@ export const LoginCard = () => {
         )}
       </form>
       <p className="text-center">
-        Нет аккаунта?{' '}
+        Есть аккаунт?{' '}
         <Link
           className="text-primary-500 hover:text-primary-400 hover:underline transition-all"
-          href={'/register'}
+          href={'/'}
         >
-          Зарегистрироваться
+          Войти
         </Link>
       </p>
     </div>
