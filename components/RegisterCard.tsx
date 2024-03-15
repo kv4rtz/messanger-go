@@ -9,15 +9,11 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { useEffect, useRef, useState, DragEvent } from 'react'
 import { useForm } from 'react-hook-form'
+import { Uploader } from './Uploader'
 
 interface LoginForm {
   login: string
   password: string
-}
-
-interface FileObject {
-  current: File
-  preview: string
 }
 
 export const RegisterCard = () => {
@@ -27,6 +23,7 @@ export const RegisterCard = () => {
     handleSubmit,
   } = useForm<LoginForm>()
   const [isVisible, setIsVisible] = useState(false)
+
   const [login, { data, error }] = useLoginMutation()
   useEffect(() => {
     if (data?.token) {
@@ -34,34 +31,15 @@ export const RegisterCard = () => {
       redirect('/lk')
     }
   }, [data])
-  const inputUploader = useRef<HTMLInputElement>(null)
 
   const onSubmitLoginForm = (data: LoginForm) => {
     login(data)
   }
-  const upload = () => {
-    if (inputUploader.current) {
-      inputUploader.current.click()
-    }
-  }
-  const [file, setFile] = useState<FileObject | null>(null)
-  const handleInputUploader = () => {
-    if (inputUploader.current) {
-      if (inputUploader.current.files) {
-        const file = inputUploader.current.files[0]
-        const url = URL.createObjectURL(file)
 
-        setFile({ current: file, preview: url })
-      }
-    }
-  }
-  const handleDrop = (event: DragEvent<HTMLDivElement>) => {
-    event.preventDefault()
-    const file = event.dataTransfer.files[0]
-    const url = URL.createObjectURL(file)
-
-    setFile({ current: file, preview: url })
-  }
+  const [avatar, setAvatar] = useState<File | null>(null)
+  useEffect(() => {
+    console.log(avatar)
+  }, [avatar])
   return (
     <div className="w-[500px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
       <h2 className="text-2xl font-bold text-center">Регистрация</h2>
@@ -113,34 +91,7 @@ export const RegisterCard = () => {
             </button>
           }
         />
-        <label
-          onDrop={handleDrop}
-          onDragOver={(e) => e.preventDefault()}
-          className="py-2 px-3 bg-default-100 rounded-medium cursor-pointer"
-        >
-          <p className="text-foreground-500 text-small">Аватар</p>
-          <div className="flex gap-3 items-center mt-2">
-            <Button onClick={upload}>Загрузить</Button>
-            {file ? (
-              <>
-                <Avatar src={file.preview} />
-                <p className="text-small text-foreground-500">
-                  {file.current.name}
-                </p>
-              </>
-            ) : (
-              <p className="text-small text-foreground-500">
-                Или перетащите сюда
-              </p>
-            )}
-          </div>
-          <input
-            onChange={handleInputUploader}
-            ref={inputUploader}
-            className="hidden"
-            type="file"
-          />
-        </label>
+        <Uploader title="Аватар" setFileProps={setAvatar} />
         <Button type="submit" color="primary" variant="solid">
           Зарегистрироваться
         </Button>
