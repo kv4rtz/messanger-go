@@ -1,7 +1,7 @@
 'use client'
 
 import { useCookie } from '@/hooks/use-cookie'
-import { useLoginMutation } from '@/store/api/auth.api'
+import { useLoginMutation, useRegisterMutation } from '@/store/api/auth.api'
 import { ErrorMessage } from '@/store/api/index.api'
 import { Avatar, Button, Input } from '@nextui-org/react'
 import clsx from 'clsx'
@@ -24,7 +24,7 @@ export const RegisterCard = () => {
   } = useForm<LoginForm>()
   const [isVisible, setIsVisible] = useState(false)
 
-  const [login, { data, error }] = useLoginMutation()
+  const [registerUser, { data, error }] = useRegisterMutation()
   useEffect(() => {
     if (data?.token) {
       useCookie('token', data.token)
@@ -32,14 +32,18 @@ export const RegisterCard = () => {
     }
   }, [data])
 
-  const onSubmitLoginForm = (data: LoginForm) => {
-    login(data)
-  }
-
   const [avatar, setAvatar] = useState<File | null>(null)
-  useEffect(() => {
-    console.log(avatar)
-  }, [avatar])
+
+  const onSubmitLoginForm = (data: LoginForm) => {
+    if (avatar) {
+      const formData = new FormData()
+      formData.append('login', data.login)
+      formData.append('password', data.password)
+      formData.append('avatar', avatar)
+
+      registerUser(formData)
+    }
+  }
   return (
     <div className="w-[500px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
       <h2 className="text-2xl font-bold text-center">Регистрация</h2>

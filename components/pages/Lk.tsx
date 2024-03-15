@@ -11,7 +11,7 @@ export const LkPage = () => {
   const router = useRouter()
   const logOut = () => {
     useCookie('token', 'logout')
-    router.push('/')
+    setTimeout(() => router.push('/'), 300)
   }
   return (
     <div className="flex justify-center items-center min-h-dvh">
