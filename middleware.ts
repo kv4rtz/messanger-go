@@ -21,9 +21,11 @@ export default async function middleware(req: NextRequest) {
     }
 
     if (url.includes('/lk') && verified.status !== 200) {
-      return NextResponse.redirect(`${rootUrl}`)
+      return NextResponse.redirect(rootUrl)
     }
   } catch (err) {
-    return NextResponse.redirect(`${rootUrl}`)
+    if (url.includes('/lk')) {
+      return NextResponse.redirect(rootUrl)
+    }
   }
 }
