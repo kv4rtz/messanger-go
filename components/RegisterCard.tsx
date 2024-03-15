@@ -45,7 +45,7 @@ export const RegisterCard = () => {
     }
   }
   return (
-    <div className="w-[500px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+    <div className="container px-2 md:w-[500px] md:p-0 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
       <h2 className="text-2xl font-bold text-center">Регистрация</h2>
       <form
         onSubmit={handleSubmit(onSubmitLoginForm)}

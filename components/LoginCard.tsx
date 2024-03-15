@@ -3,12 +3,14 @@
 import { useCookie } from '@/hooks/use-cookie'
 import { useLoginMutation } from '@/store/api/auth.api'
 import { ErrorMessage } from '@/store/api/index.api'
+import { setUser } from '@/store/user.slice'
 import { Button, Input } from '@nextui-org/react'
 import clsx from 'clsx'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useDispatch } from 'react-redux'
 
 interface LoginForm {
   login: string
@@ -34,7 +36,7 @@ export const LoginCard = () => {
     login(data)
   }
   return (
-    <div className="w-[500px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+    <div className="container px-2 md:w-[500px] md:p-0 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
       <h2 className="text-2xl font-bold text-center">Вход в аккаунт</h2>
       <form
         onSubmit={handleSubmit(onSubmitLoginForm)}

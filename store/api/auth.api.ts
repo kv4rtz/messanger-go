@@ -10,7 +10,7 @@ interface AuthResponse {
 }
 
 export interface User {
-  id: string
+  id: number
   login: string
   password: string
   avatar: string
