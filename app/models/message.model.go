@@ -15,12 +15,13 @@ type Message struct {
 	User      *User     `json:"user"`
 }
 
-func (c *Message) CreateMessage(text string, userId, chatId uint) error {
-	if err := Database.Create(&Message{Text: text, UserID: userId, ChatID: chatId}).Error; err != nil {
-		return err
+func (c *Message) CreateMessage(text string, userId, chatId uint) (Message, error) {
+	var message = Message{Text: text, UserID: userId, ChatID: chatId}
+	if err := Database.Preload(clause.Associations).Create(&message).Error; err != nil {
+		return message, err
 	}
 
-	return nil
+	return message, nil
 }
 
 func (c *Message) GetMessagesByChatId(chatId uint) ([]Message, error) {

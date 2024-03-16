@@ -12,6 +12,6 @@ func WebSocketsRouter(r fiber.Router) {
 
 	go gateways.RunHub()
 	webSocketsRouter.Use(middlewares.WebsocketMiddleware)
-	webSocketsRouter.Use(middlewares.Auth)
+	webSocketsRouter.Use(middlewares.WebsocketAuth)
 	webSocketsRouter.Get("/:id", middlewares.Chat, websocket.New(gateways.WebsocketChat))
 }

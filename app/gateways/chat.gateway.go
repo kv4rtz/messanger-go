@@ -1,16 +1,23 @@
 package gateways
 
 import (
+	"encoding/json"
 	"github.com/gofiber/contrib/websocket"
 	"log"
 	"test-api/app/models"
 )
 
+type WebsocketMessage struct {
+	Event   string         `json:"event"`
+	Data    string         `json:"data"`
+	Message models.Message `json:"message"`
+}
+
 type client models.User
 
 var clients = make(map[*websocket.Conn]client)
 var register = make(chan *websocket.Conn)
-var broadcast = make(chan string)
+var broadcast = make(chan WebsocketMessage)
 var unregister = make(chan *websocket.Conn)
 
 var messageService = models.Message{}
@@ -22,12 +29,18 @@ func RunHub() {
 			clients[conn] = client{}
 
 		case message := <-broadcast:
+			response, err := json.Marshal(message)
+			if err != nil {
+				return
+			}
 			for conn := range clients {
-				if err := conn.WriteMessage(websocket.TextMessage, []byte(message)); err != nil {
-					log.Println(err)
-					unregister <- conn
-					if err := conn.Close(); err != nil {
-						return
+				if message.Event == "message" {
+					if err := conn.WriteMessage(websocket.TextMessage, response); err != nil {
+						log.Println(err)
+						unregister <- conn
+						if err := conn.Close(); err != nil {
+							return
+						}
 					}
 				}
 			}
@@ -56,7 +69,15 @@ func WebsocketChat(ws *websocket.Conn) {
 	}
 
 	for _, message := range messages {
-		err := ws.WriteMessage(websocket.TextMessage, []byte(message.User.Login+": "+message.Text))
+		response, err1 := json.Marshal(WebsocketMessage{
+			Event:   "message",
+			Message: message,
+		})
+		if err1 != nil {
+			return
+		}
+
+		err := ws.WriteMessage(websocket.TextMessage, response)
 		if err != nil {
 			return
 		}
@@ -69,10 +90,12 @@ func WebsocketChat(ws *websocket.Conn) {
 			break
 		}
 
-		if err := messageService.CreateMessage(string(message), user.ID, chat.ID); err != nil {
+		createdMessage, err1 := messageService.CreateMessage(string(message), user.ID, chat.ID)
+		if err1 != nil {
 			return
 		}
+		createdMessage.User = &user
 
-		broadcast <- user.Login + ": " + string(message)
+		broadcast <- WebsocketMessage{Message: createdMessage, Event: "message"}
 	}
 }

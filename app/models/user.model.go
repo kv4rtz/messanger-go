@@ -30,7 +30,7 @@ func (u *User) CreateUser(user User) (User, error) {
 
 func (u *User) GetAllUsers() ([]User, error) {
 	var users []User
-	if err := Database.Find(&users).Error; err != nil {
+	if err := Database.Preload("Chats").Find(&users).Error; err != nil {
 		return users, err
 	}
 
@@ -39,7 +39,7 @@ func (u *User) GetAllUsers() ([]User, error) {
 
 func (u *User) GetUserById(id uint) (User, error) {
 	var user User
-	if err := Database.Where("id =?", id).First(&user).Error; err != nil {
+	if err := Database.Where("id = ?", id).First(&user).Error; err != nil {
 		return user, err
 	}
 	return user, nil
