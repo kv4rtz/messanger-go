@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.messanger::-webkit-scrollbar {
+  @apply w-[5px];
+}
+
+.messanger::-webkit-scrollbar-track {
+  @apply bg-black;
+}
+
+.messanger::-webkit-scrollbar-thumb {
+  @apply bg-default-100 rounded-medium;
+}

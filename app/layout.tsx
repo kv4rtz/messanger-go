@@ -1,6 +1,7 @@
 import { PropsWithChildren } from 'react'
 import './globals.css'
 import '@flaticon/flaticon-uicons/css/regular/rounded.css'
+import '@flaticon/flaticon-uicons/css/solid/rounded.css'
 import { Providers } from '@/components/Providers'
 import { Montserrat } from 'next/font/google'
 import clsx from 'clsx'

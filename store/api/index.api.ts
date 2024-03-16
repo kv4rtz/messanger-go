@@ -28,6 +28,7 @@ export const api = createApi({
       return headers
     },
   }),
+  tagTypes: ['chats'],
   endpoints: (builder) => ({
     empty: builder.query({
       query: () => '',
