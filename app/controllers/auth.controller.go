@@ -4,9 +4,25 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"net/http"
 	"test-api/app/models"
+	_ "test-api/docs"
 	"test-api/utils"
 )
 
+type ResponseToken struct {
+	Token string `json:"token"`
+}
+
+// Login godoc
+//
+//	@Summary		Login
+//	@Description	Login
+//	@Tags			Authentication
+//	@Accept			json
+//	@Produce		json
+//	@Param			login		body		string	true	"Login"
+//	@Param			password	body		string	true	"Password"
+//	@Success		200			{object}	ResponseToken
+//	@Router			/auth/login [post]
 func Login(c *fiber.Ctx) error {
 	var bodyUser models.User
 	if err := c.BodyParser(&bodyUser); err != nil {
@@ -32,6 +48,18 @@ func Login(c *fiber.Ctx) error {
 	})
 }
 
+// Register godoc
+//
+//	@Summary		Register
+//	@Description	Register new account
+//	@Tags			Authentication
+//	@Accept			json
+//	@Produce		json
+//	@Param			login		body		string	true	"Login"
+//	@Param			password	body		string	true	"Login"
+//	@Param			avatar		formData	file	true	"Avatar"
+//	@Success		200			{object}	ResponseToken
+//	@Router			/auth/register [post]
 func Register(c *fiber.Ctx) error {
 	var bodyUser models.User
 	if err := c.BodyParser(&bodyUser); err != nil {
@@ -61,6 +89,18 @@ func Register(c *fiber.Ctx) error {
 	})
 }
 
+// CheckToken godoc
+//
+//	@Summary		Check authorization token
+//	@Description	Check Authorization Token
+//	@Tags			Authentication
+//	@Accept			json
+//	@Produce		json
+//
+//	@Param			Authorization	header		string	true	"Authorization"	example:	"Bearer <KEY>"
+//
+//	@Success		200				{object}	models.User
+//	@Router			/auth/check [get]
 func CheckToken(c *fiber.Ctx) error {
 	user := c.Locals("user").(models.User)
 

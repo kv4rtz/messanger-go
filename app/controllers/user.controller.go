@@ -9,6 +9,18 @@ import (
 
 var userService = &models.User{}
 
+// GetAllUsers godoc
+//
+//	@Summary		Get all users
+//	@Description	Get all users
+//	@Tags			Users
+//	@Accept			json
+//	@Produce		json
+//
+//	@Param			Authorization	header		string	true	"Authorization"	example:	"Bearer <KEY>"
+//
+//	@Success		200				{object}	[]models.User
+//	@Router			/users [get]
 func GetAllUsers(c *fiber.Ctx) error {
 	users, err := userService.GetAllUsers()
 	if err != nil {
